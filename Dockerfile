@@ -12,5 +12,7 @@ RUN /tmp/install_languages_dependencies.sh
 RUN /tmp/install_lunarvim.sh
 RUN /tmp/configuring_yay.sh
 
+RUN cd /tmp && mkdir sources
+
 SHELL ["/bin/zsh"]
 ENTRYPOINT ["sh", "-c", "neofetch && zsh"]
