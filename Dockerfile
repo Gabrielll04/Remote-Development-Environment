@@ -1,12 +1,16 @@
 FROM archlinux:latest
 
 RUN pacman -Syu --noconfirm && \
-    pacman -Sy --noconfirm --needed curl base-devel wget neovim git make neofetch htop nodejs-lts-hydrogen npm elixir && \
+    pacman -Sy --noconfirm --needed curl base-devel wget neovim git make neofetch htop && \
     rm -rf /var/cache/pacman/pkg/*
 
+COPY ./install_languages_dependencies.sh /tmp
 COPY ./install_lunarvim.sh /tmp
+
+RUN /tmp/install_languages_dependencies.sh
 RUN /tmp/install_lunarvim.sh
 
+#create a new user and install yay
 RUN mkdir -p /tmp/yay-build && \
     useradd -m -G wheel builder && passwd -d builder && \
     chown -R builder:builder /tmp/yay-build && \
@@ -20,7 +24,5 @@ RUN mkdir -p /tmp/yay-build && \
     chsh -s /usr/bin/zsh && \
     rm -rf /tmp/yay-build
 
-SHELL [ "bin/zsh" ]    
-ENTRYPOINT [ "sh", "-c", "neofetch && zsh" ]
-# su - builder -c "yay -S --noconfirm zsh-theme-powerlevel10k-git"  && \
-# echo 'source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc && \
+SHELL ["/bin/zsh"]
+ENTRYPOINT ["sh", "-c", "neofetch && zsh"]
